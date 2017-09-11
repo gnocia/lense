@@ -1,0 +1,240 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <!--meta content='15' http-equiv='refresh'/-->
+   <script type="text/javascript">
+	function suggest1(){
+	  document.getElementById('stats-').style.display='inline-block';
+	  document.getElementById('stats+').style.display='none';
+
+          var elements = document.getElementsByClassName('tblstats-');
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = 'none';
+	  }
+
+          elements = document.getElementsByClassName('tblstats+');
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = '';
+	  }
+
+	  //document.getElementById('tblstats-').style.display="none"
+	  //document.getElementById('tblstats+').style.display=''
+	}
+	function suggest2(){
+	  document.getElementById('stats-').style.display='none';
+	  document.getElementById('stats+').style.display='inline-block';
+
+          var elements = document.getElementsByClassName('tblstats-'), i;
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = '';
+	  }
+
+          elements = document.getElementsByClassName('tblstats+');
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = 'none';
+	  }
+
+	  //document.getElementById('tblstats-').style.display=''
+	  //document.getElementById('tblstats+').style.display="none"
+	}
+	function suggest3(){
+	  document.getElementById('img-').style.display='inline-block';
+	  document.getElementById('img+').style.display='none';
+	  document.getElementsByClassName('imgdivcnt')[0].style.display="none";
+
+	  var elements = document.getElementsByClassName('imgdiv'), i;
+	  for (var i = 0; i < elements.length; i ++) {
+	    elements[i].style.display = '';
+	  }
+	}
+	function suggest4(){
+	  document.getElementById('img-').style.display='none';
+	  document.getElementById('img+').style.display='inline-block';
+	  document.getElementsByClassName('imgdivcnt')[0].style.display=""
+
+	  var elements = document.getElementsByClassName('imgdiv'), i;
+	  for (var i = 0; i < elements.length; i ++) {
+	    elements[i].style.display = 'none';
+	  }
+	function labs(){  
+	  document.getElementById('contset1').style.display='none';
+	  document.getElementById('contset2').style.display='';
+	}
+	}
+   </script>
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Containers
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+    <form id="form1" action="{{url_for('remote')}}" method="post">
+        <table style="table-layout: fixed;width:100%" border=0>
+         <tr><th width="25%">
+          <div align="left">
+
+          <!--div class="radio">
+          <div class="radio">
+            <label><input type="radio" id="radio2" name="radio" value="Start" onclick = "suggest()">Ping Host</label>
+          </div-->
+          <div id="div_script" >
+                <select name="Status" onclick="status()" style="width:85%;">
+                  <option selected hidden>Select Status</option>
+                  <option id="svc_docker" value="Start">Start</option>
+                  <option id="svc_docker" value="Stop">Stop</option>
+                  <option id="svc_docker" value="Dnld">Download</option>
+                </select>
+          </div>
+          <div id="div_script" >
+                <select name="Lab" onclick="labs()" style="width:85%;">
+                  <option selected hidden>Select Lab</option>
+                  <option id="svc_docker" value="lb1">Lab1</option>
+                  <option id="svc_docker" value="lb2">Lab2</option>
+                </select>
+          </div>
+          <div id="contset1" >
+                <select name="Lab1" onclick="sublabs()" style="width:85%;">
+                  <option selected hidden>Select Container</option>
+                  <option id="svc_docker" value="prologic/nfs-client">Nfs-Client</option>
+                  <option id="svc_docker" value="voxxit/rsyslog">RsysLog</option>
+                </select>
+          </div>
+          <div id="contset2" style="display:none">
+                <select name="Lab2" onclick="sublabs()" style="width:85%;">
+                  <option selected hidden>Select Container</option>
+                  <option id="svc_docker" value="cnt3">Apache</option>
+                  <option id="svc_docker" value="cnt4">Debian</option>
+                </select>
+          </div>
+
+         </th><th>
+           <!--div-->
+
+           <!-- Populating the dropdown selectors -->
+           <div id="div_script" >
+                <select name="service" onclick="suggest()" style="width:85%;">
+                  <option selected hidden>Select service</option>
+                  <option id="svc_docker" value="docker">Docker</option>
+                  <option id="svc_other" value="other">Other</option>
+                </select>
+           </div>
+           <div><input id="src_2" style="align:left;" type="text" name="search2" value="" style="width:85%;"/></div>
+           <!--a>&nbsp;&nbsp;</a-->
+         </th><th>
+           <input type="submit" value="Execute" />
+         </th></tr>
+       </table>
+
+{% endblock %}
+
+{% block feature %}
+    {% with messages2 = get_flashed_messages(with_categories=true) %}
+      {% for tag, messages in messages2 %}
+	{{ messagesi }}
+        {% if tag=='group' %}
+	    <div style="height:30px"></div>
+            <div align="left">
+		<b>Remote Hosts</b> - &nbsp;&nbsp;&nbsp;&nbsp;
+		Active:<font color="green">{{ messages[-1][0] }}</font>&nbsp;&nbsp;&nbsp;&nbsp;
+		Inactive:<font color="red">{{ messages[-1][1] }}</font>
+	    </div>
+            <div align="left">
+                 <p><br></p>
+
+                 <table style="border-collapse:collapse; table-layout: fixed;width:100%;">
+                  <tr style="outline: thin solid">
+                    <th style="width:20%">Control</th>
+                    <th style="width:20%">IP Address</th>
+                    <th style="width:40%">Containers
+				<div id='stats+' style="display:inline-block;" onclick="suggest1()"><label>[+]</label></div>
+				<div id='stats-' style="display:none;" onclick="suggest2()"><label>[-]</label></div>
+		    </th>
+		    <th>Images 
+				<div id='img+' style="display:inline-block;" onclick="suggest3()"><label>[+]</label></div>
+				<div id='img-' style="display:none;" onclick="suggest4()"><label>[-]</label></div>
+		    </th>
+                  </tr>
+                  {% for message in messages[:-1] %}
+		     <tr style="outline: #eaebed thin solid">
+			<td></th>
+			<td>{{ message[0] }}</th>
+			<td style="word-wrap: break-word;">
+			   <table class='tblstats+' style="table-layout:fixed;display:none;">
+			   {% set count1 = [0] %}
+			   {% for msg in message[1]['running'] %}
+			      {% if msg!="n/a" %}
+				{% if count1.append(count1.pop() + 1) %}{% endif %}
+			      {% endif %}
+				<tr >
+				    <td style="min-width:16px"><img src="/static/images/greendot.png"/></td>
+				    <td style="word-wrap: break-word">{{ msg }}</td>
+				</tr>
+                           {% endfor %}
+			   {% set count2 = [0] %}
+			   {% for msg in message[1]['exited'] %}
+			      {% if msg!="n/a" %}
+			        {% if count2.append(count2.pop() + 1) %}{% endif %}
+			      {% endif %}
+				<tr>
+				    <td style="min-width:16px">{% if msg!="n/a" %}<img src="/static/images/reddot.png"/>{% endif %}</td>
+				    <td style="word-wrap: break-word">{{ msg }}</td>
+				</tr>
+                           {% endfor %}
+			   </table>
+			   <table class='tblstats-' style="table-layout:fixed;">
+			      {% if count1[0]!=0 or count2[0]!=0 %}
+				<tr >
+				    <td style="min-width:16px">
+					<img src="/static/images/greendot.png"/>
+				    </td>
+				    <td> {{ count1[0] }} Running</td>
+				</tr>
+				<tr >
+				    <td style="min-width:16px">
+					<img src="/static/images/reddot.png"/>
+				    </td>
+				    <td> {{ count2[0] }} Exited</td>
+				</tr>
+			      {% else %}
+			        <tr><td>n/a</td></tr>
+			      {% endif %}
+			   </table>
+			</td>
+			<td style="word-wrap: break-word">
+			   {% set count = [0] %}
+			   {% for msg in message[1]['images'] %}
+			    <div class='imgdiv' style="display:none;">{{ msg }}</div>
+			    {% if msg!='n/a' %}
+				{% if count.append(count.pop() + 1) %}{% endif %}
+			    {% endif %}
+                           {% endfor %}
+			   <div class='imgdivcnt'>{% if count[0] %}{{count[0]}}{% else %}n/a{% endif %}</div>
+			</td>
+		     </tr>
+                  {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+      {% endfor %}
+    {% endwith %}
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('remote')}}" accesskey="3" title="">Remote</a></li>
+    <li class="current_page_item"><a href="{{url_for('cont')}}" accesskey="4" title="">Containers</a></li>
+    <li><a href="{{url_for('manage')}}" accesskey="5" title="">Manage</a></li>
+{% endblock %}

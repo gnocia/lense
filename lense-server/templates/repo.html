@@ -1,0 +1,142 @@
+{% extends "base2.html" %}
+
+############################################
+#set page title
+############################################
+{% block title %}
+   Repository
+{% endblock %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <title>Lense: Repository</title>
+   <script type="text/javascript">
+        function hider1(var1,var2){
+	  document.getElementById(var1).style.display="none";
+	  document.getElementById(var2).style.display="";
+	}
+   </script>
+{% endblock %}
+############################################
+#set page contents
+############################################
+{% block body %}
+  {% with messages = get_flashed_messages() %}
+    <form action="{{url_for('repo')}}" method="post">
+        <table style="table-layout: fixed;width:100%" border=0>
+         <tr>
+          <th width="16%" style="vertical-align:top;" align="left">
+	    Filter by :
+	  </th>
+	  <th align="left">
+            <div align="left"><div class="radio" >
+    	      <label><input type="radio" checked="checked" name="radio" onchange="hider1('comps','lesson');" value="sys">Lessons</label>
+  	    </div>
+            <div align="left"><div class="radio" >
+    	      <label><input type="radio" checked="checked" name="radio" onchange="hider1('lesson','comps');" value="sys">Components</label>
+  	    </div>
+          </th>
+	 </tr>
+       </table>
+  {% endwith %}
+{% endblock %}
+
+       <div id="featured">
+       </div>
+
+{% block feature %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div align="left">
+                 <p><br></p>
+
+                 <table id="comps" style="table-layout:fixed; width:100%; display:none;" border=0>
+                  <tr>
+                    <th width="20%" align="left">Controls</th>
+                    <th>Component</th>
+                    <th>Description</th>
+                  </tr>
+		  <tr>
+		    <td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                  </tr>
+                  {% for comp in messages[0]['comps']|sort %}
+		     <tr>
+			<td width="20%" style="vertical-align:top;">
+			    <button type="submit" id="comp" name="comp" value="{{comp,messages[0]}}" title="download">
+			      <img src="/static/images/dnld.png"/>
+			    </button>
+			</td>
+			<td style="vertical-align:top;" align="center">
+			    <div>Title:&nbsp;<font color="darkgreen"><b>{{ messages[0]['comps'][comp][0] }}</b></font></div>
+			    <div>CN:&nbsp;{{ comp }}</div>
+			</td>
+			<td style="vertical-align:top;">
+			    <div style="white-space: pre-wrap;">{{ messages[0]['comps'][comp][1]|replace('\n','<br>') }}</div>
+			    <br>
+			    <!--div><font color="">Last Updated: n/a</font></div-->
+			</td>
+		     </tr>
+		     <tr>
+		       <td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                     </tr>
+		  {% endfor %}
+		 </table>
+
+
+                 <table id="lesson" style="table-layout: fixed;width:100%" border=0>
+                  <tr>
+                    <th width="20%" align="left">Controls</th>
+                    <th>Exercise</th>
+                    <th>Description</th>
+                  </tr>
+		  <tr>
+		    <td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                  </tr>
+                  {% for lesn in messages[0]['index'] %}
+                     <tr>
+                        <td style="vertical-align:top;">
+			 <button type="submit" id="lesn" name="lesn" value="{{lesn,messages[0]}}" 
+			   {% if lesn in messages[0]['dld_lsn'] %}
+			      title="downloading" disabled><img src="/static/images/wait.png"/>
+			   {% else %}
+			      title="download"><img src="/static/images/dnld.png"/>
+			   {% endif %}
+			 </button>
+			</td>
+                        <td style="vertical-align:top;" align="center">
+			    {{ messages[0]['lesns'][lesn][0] }}
+			</td>
+                        <td align="">
+			    <div id="{{lesn}}-min" style="display:'';">
+				{{ messages[0]['lesns'][lesn][1][:100] }}
+				<div style="display:inline-block" onclick="hider1('{{lesn}}-min','{{lesn}}-max');">
+			             <font color="blue">..more</font>
+				</div>
+			    </div>
+			    <div id="{{lesn}}-max" style="display:none; white-space: pre-wrap;">{{ messages[0]['lesns'][lesn][1] }}<div style="display:inline-block" onclick="hider1('{{lesn}}-max','{{lesn}}-min');"><font color="blue"> ..less</font></div>
+			    </div>
+			    <br>
+			    <!--div>Last Updated: n/a</div-->
+			</td>
+                     </tr>
+		     <tr>
+			<td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                     </tr>
+                  {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    {% endwith %}
+   </form>
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('bhome')}}" accesskey="1" title="">Home</a></li>
+    <li class="current_page_item"><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('create')}}" accesskey="3" title="">Lessons</a></li>
+{% endblock %}

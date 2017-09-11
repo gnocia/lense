@@ -1,0 +1,218 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <script type="text/javascript">
+        function suggest1(var1){
+          document.getElementById(var1+'-').style.display='inline-block';
+          document.getElementById(var1).style.display='';
+          document.getElementById(var1+'img').style.display='none';
+          document.getElementById(var1+'+').style.display='none';
+        }
+        function suggest2(var2){
+          document.getElementById(var2+'-').style.display='none';
+          document.getElementById(var2).style.display='none';
+          document.getElementById(var2+'+').style.display='inline-block';
+          document.getElementById(var2+'img').style.display='';
+        }
+        function suggest3(var1,var2){
+	  if (var2=="+") {
+	     document.getElementById(var1+'+').style.display='none';
+	     document.getElementById(var1+'-dot').style.visibility='hidden';
+	     document.getElementById(var1+'-').style.display='inline';
+             var elements = document.getElementsByClassName(var1+'-cont');
+             for (var i = 0; i < elements.length; i ++) {
+                elements[i].style.display = '';
+             }
+	  }
+	  else {
+	     document.getElementById(var1+'-').style.display='none';
+	     document.getElementById(var1+'-dot').style.visibility='';
+	     document.getElementById(var1+'+').style.display='inline';
+             var elements = document.getElementsByClassName(var1+'-cont');
+             for (var i = 0; i < elements.length; i ++) {
+                elements[i].style.display = 'none';
+             }
+	  }
+	}
+   </script>
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Class/Lab
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+{% endblock %}
+
+{% block feature %}
+    {% with messages2 = get_flashed_messages(with_categories=true) %}
+      <table style="border-collapse:collapse; width:100%;" border=0>
+      {% for tag, messages in messages2 %}
+        {% if tag=='lesson' %}
+	   {{ messagesi }}
+         {% for counter in messages|sort %}
+	   {% set row = [] %}
+	   {% if row.append(messages[counter]) %}{% endif %}
+	   {{ counteri }}
+	   <tr><td style="height:2%"></td></tr>
+           <tr style="outline: thin solid #d7dbe1;" align="left">
+             <th style="align:left;border-radius: 4px 4px 4px 4px;" bgcolor="#d6dbdf" colspan="2">&nbsp;
+	       <div id='{{ counter }}+' style="display:inline-block;" onclick="suggest1('{{ counter }}')">
+                <img src="/static/images/dwnarow.png"/>
+               </div>
+	       <div id='{{ counter }}-' style="display:none;" onclick="suggest2('{{ counter }}')">
+                <img src="/static/images/uparow.png"/>
+               </div>&nbsp;&nbsp;{{loop.index}}. &nbsp;{{ row[0]['desc'][0] }}
+
+	       <div id="{{ counter }}img" style="display:inline; float:right;">
+		  <img 
+		    {% if row[0]['status'] == 'S' %}
+                           src="/static/images/warn.png" 
+                           title="1 or more components not started"
+		    {% elif row[0]['status'] == 'Y' %}
+                           src="/static/images/Good.png" 
+                           title="All components started"
+                    {% else %}
+                           src="/static/images/warn.png" 
+                           style="visibility:hidden" 
+                    {% endif %}
+                  />
+
+		  <img src="/static/images/separator.png"/>
+		  <form style="display:inline;" action="{{url_for('chome')}}" method="post">
+		    {% if row[0]['status'] == 'Y' %}
+		       <button style="border:1;background-color:Transparent;" type="submit" name="stop-all" value="{{ row[0]['comps'] }}" title="Pause all components">
+			  <img src="/static/images/pause.png"/></button>
+		    {% elif row[0]['status'] == 'N' %}
+		       <button style="border:1;background-color:Transparent;" type="submit" name="start-all" value="{{ row[0]['comps'] }}" title="Start all components">
+			  <img src="/static/images/Exited.png"/></button>
+		    {% else %}
+		       <button style="border:1;background-color:Transparent;" type="submit" name="restart-all" value="{{ row[0]['comps'] }}" title="Resume All">
+			  <img src="/static/images/resume.png"/></button>
+		    {% endif %}
+		       <button style="border:1;background-color:Transparent;" type="submit" name="reset-all" value="{{ row[0]['comps'] }}" title="Reset All">
+			  <img src="/static/images/refresh.png"/></button>&nbsp;
+		  </form>
+	       </div>
+	     </th>
+	   </tr>
+
+           <tr align="left" bgcolor="#ebedef">
+              <td style="width:4%"></td>
+              <td style="width:96%">
+                 <table id="{{ counter }}" style="border-collapse:collapse; width:100%; display:none;" border=0>
+
+                   <tr><td style="height:20px"></td></tr>
+                   <tr><td style="" colspan="2">{{ row[0]['desc'][1] }}</td>
+                       <!--td style="width:4%"></td-->
+                   </tr>
+
+                   <tr><td style="height:20px"></td></tr>
+                   {% for cnt in row[0]['comps']|sort %}
+		     {% set temp = row[0]['comps'][cnt] %}
+                     <tr align="left">
+                       <td style="align:left;" colspan="2">
+                        &nbsp;&nbsp;
+                        <div title="Description:&#013;{{ temp['desc'][1] }}&#013;&#013;Image: {{ temp['index'][0] }}:{{ temp['index'][1] }}
+				  	      	&#013;Size: {{ temp['index'][3] }}" style="display:inline-block"
+                        >
+			  {% if temp['index'][5] and temp['index'][4]!='N' %}
+			   <div style="display:inline; float:left;" id="{{ cnt }}+" onclick="suggest3('{{ cnt }}','+')">
+				<label>[+]</label>
+			   </div>
+			  {% endif %}
+			   <div style="display:none; float:left;" id="{{ cnt }}-" onclick="suggest3('{{ cnt }}','-')">
+				<label>[-]</label>&nbsp;
+			   </div>
+                           <font color="#53668c">
+                                &nbsp;{{ temp['desc'][0] }}
+                           </font>
+                        </div>
+                        <div style="display:inline; float:right;" id="{{cnt}}-ctl">
+                          <form style="display:inline;" action="{{url_for('chome')}}" method="post">
+                          {% if temp['status'][0] == 'Y' %}
+                              <button style="border:1;background-color:Transparent;" type="submit" name="connect" value="{{ cnt,temp['desc'][0] }}" title="Connect">
+					<img src="/static/images/connect3.png"/></button>
+                              		<img src="/static/images/separator2.png"/>
+                              <button style="border:1;background-color:Transparent;" type="submit" name="stop-all" value="{{ cnt }}" title="Stop">
+					<img src="/static/images/pause.png"/></button>
+                          {% elif temp['status'][0] == 'S' %}
+                              		<img src="/static/images/separator2.png"/>
+                              <button style="border:1;background-color:Transparent;" type="submit" name="restart-all" value="{{ cnt }}" title="Resume">
+					<img src="/static/images/resume.png"/></button>
+                          {% else %}
+                              		<img src="/static/images/separator2.png"/>
+                              <button style="border:1;background-color:Transparent;" type="submit" name="start-all" value="{{ {cnt:temp} }}" title="Start">
+					<img src="/static/images/Exited.png"/></button>
+                          {% endif %}
+                              		<img src="/static/images/separator2.png"/>
+                              <button style="border:1;background-color:Transparent;" type="submit" name="reset-all" value="{{ cnt }}" title="Reset">
+					<img src="/static/images/refresh.png"/></button>
+
+                                    	<img src="/static/images/separator2.png"/>
+                          {% if temp['status'][0] == 'Y' %}
+					<img id="{{cnt}}-dot" title="Started" src="/static/images/greendot.png"/>
+                          {% elif temp['status'][0] == 'S' %}
+                                   	<img id="{{cnt}}-dot" title="Stopped" src="/static/images/reddot.png"/>
+                          {% else %}
+                              		<img style="visibility:hidden;" src="/static/images/reddot.png"/>
+                          {% endif %}
+                                	&nbsp;&nbsp;
+                          </form>
+                        </div>
+		       </td>
+		     </tr>
+
+		     {% for item in temp['index'][5] %}
+		       <tr class="{{ cnt }}-cont" style="display:none">
+                         <td style="align:left;" colspan="2">
+                             &nbsp;&nbsp;&nbsp;&nbsp;
+			     <div style="display:inline-block">{{ item[2] }}</div>
+			     <div style="display:inline; float:right;" align="right">
+				  
+                          	<form style="display:inline;" action="{{url_for('chome')}}" method="post">
+				  {% if True %}
+                              		<button style="border:1;background-color:Transparent;" type="submit" name="jump" value="{{ {cnt:item} }}" title="Jump to this step">
+					<img src="/static/images/jump.png"/></button>
+				  {% endif %}
+				</form>
+                          	  <img src="/static/images/separator2.png"/>
+				  {% if item[1] == 'Y' %}<img title="Started" src="/static/images/greendot.png"/> 
+				  {% elif item[1] == 'S' %}<img title="Stopped" src="/static/images/reddot.png"/> 
+				  {% else %}<img style="visibility:hidden;" src="/static/images/reddot.png"/> 
+				  {% endif %}
+				  &nbsp;&nbsp;
+			     </div>
+		         </td>
+		       </tr>
+                     {% endfor %}
+
+		   {% endfor %}
+		   <tr><td style="height:20px"></td></tr>
+	         </table>
+	      </td>
+	   </tr>
+	   <tr></td></td></tr>
+
+	 {% endfor %}
+	{% endif %}
+      {% endfor %}
+      </table>
+
+    {% endwith %}
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li class="current_page_item"><a href="{{url_for('chome')}}" accesskey="1" title="">Home</a></li>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <meta content='15' http-equiv='refresh'/>
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Home
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div align="left">
+               {% if messages[0]=='active' %}
+                  Service : <font color="green">Active</font>
+               {% else %}
+                  Service : <font color="red">Stopped</font>
+               {% endif %}
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block feature %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages[0]=='active' %}
+            <div align="left">
+                 <p><br></p>
+
+                 <table style="table-layout: fixed;width:100%">
+                  <tr>
+                    <th>Control</th>
+                    <th>Container Name</th>
+                    <th>Base Image</th>
+                    <th>Status</th>
+                    <th>Ports</th>
+                  </tr>
+                  {% for message in messages[1:] %}
+                       <tr>
+                        <td align="">
+                            <form action="{{url_for('home')}}" method="post">
+
+			     <button type="submit" name="submit" value="{{ message[4], 
+                                 message[0] }}" data-toggle="tooltip" 
+                                 {% if message[4]=='Up' %}
+					title="Stop Container"><img src="/static/images/Up.png" height="16px"/>
+				 {% else %}
+					title="Start Container"><img src="/static/images/Exited.png" height="16px"/>
+				 {% endif %}
+			     </button>
+
+			     <button type="submit" name="submit1" value="'Attach', {{
+                                 message[0] }}" data-toggle="tooltip" 
+                                 {% if message[4]=='Up' %}
+					title="Connect"><img src="/static/images/link-Up.png" height="16px"/>
+				 {% else %}
+					title="Disabled" disabled="true"><img src="/static/images/link-Down.png" height="16px"/>
+				 {% endif %}
+			     </button>
+                            </form>
+			</td>
+                        <td>{{ message[0] }}</td>
+                        <td>{{ message[1] }}</td>
+                        <td>{{ message[2] }}</td>
+                        <td style="word-wrap: break-word">{{ message[3] }}</td>
+                       </tr>
+                  {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li class="current_page_item"><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('remote')}}" accesskey="3" title="">Remote</a></li>
+    <li><a href="{{url_for('cont')}}" accesskey="4" title="">Containers</a></li>
+    <li><a href="{{url_for('manage')}}" accesskey="5" title="">Manage</a></li>
+{% endblock %}

@@ -1,0 +1,543 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <title>Lense: Summary</title>
+   <link href="/static/circle.css" rel="stylesheet" type="text/css" />
+   <link href="/static/tbstyle.css" rel="stylesheet" type="text/css" />
+
+   <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+   <script type="text/javascript">
+	function suggest(val){
+	  //hide the default th in row3
+          var elements = document.getElementsByClassName('default');
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = 'none';
+          }
+	  // hide all elements of the class all-td
+          var elements = document.getElementsByClassName('all-td');
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = 'none';
+          }
+	  // unhide just the elements of the name in val
+          var elements = document.getElementsByName(val);
+          for (var i = 0; i < elements.length; i ++) {
+            elements[i].style.display = '';
+          }
+	}
+
+	function show(val){
+	  if (val == 'all'){
+	     var elements = document.getElementsByClassName('active');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = '';
+             }
+	     var elements = document.getElementsByClassName('inactive');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = '';
+             }
+          } 
+	  else if (val == 'inactive'){
+	     var elements = document.getElementsByClassName('active');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = 'none';
+             }
+	     var elements = document.getElementsByClassName('inactive');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = '';
+             }
+          } 
+	  else if (val == 'active'){
+	     var elements = document.getElementsByClassName('active');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = '';
+             }
+	     var elements = document.getElementsByClassName('inactive');	
+	     for (var i = 0; i < elements.length; i ++) {
+               elements[i].style.display = 'none';
+             }
+          } 
+	}
+	function checker(val){
+	  var elements = document.getElementsByClassName('check');
+          for (var i = 0; i < elements.length; i ++) {
+              elements[i].checked = val;
+	  }
+	}
+	function divcolor(val1, val2){
+	  var element=document.getElementById('div-'+val2);
+	  if (val1) { element.style.backgroundColor="#f5ccff"; }
+	  else { element.style.backgroundColor="";}
+	}
+	function compchecker(val1, val2){
+	  var elements=document.getElementsByClassName(val2);
+	  for (var i =0; i < elements.length; i++) {
+	      elements[i].checked = val1;
+
+	      var element=document.getElementById('div-'+elements[i].getAttribute('id'));
+	      if (val1) { element.style.backgroundColor="#f5ccff"; }
+	      else { element.style.backgroundColor=""; }
+	  }
+	}
+	function setgrp(val){
+	  var checkboxes = document.getElementsByName("hosts");
+	  var arrayVal = [];
+	  for (var i= 0; i<checkboxes.length;i++)
+	  {
+	     if (checkboxes[i].checked === true)
+	     {
+	         arrayVal.push(checkboxes[i].value); 
+	     }
+	  }
+	}
+	function checkgrps(){
+	  {% with messages2 = get_flashed_messages(with_categories=true) %}
+            {% for tag,messages in messages2 %}
+              {% if tag=='index' %}
+		{% for msg in messages[3] %}
+
+	  	      document.getElementById("{{ msg }}").setAttribute('checked', 'checked');
+	  	      //document.getElementById("{{ msg }}").checked="true";
+
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endwith %}
+	}
+
+	//jQuery functions
+	
+	$(document).ready(function()
+	{
+		//set the delay amount 
+		var delay1 = 5000;
+
+		//every 5 second get the 
+		window.setInterval( function() {
+			//activeHost();
+			//alter(result['active']);
+		}, delay1);
+	});
+
+	function activeHost(){
+	    $.ajax({
+              url: '/ajaxrequest/',
+              data: '',
+              type: 'POST',
+              success: function(response) {
+			var result = JSON.parse(response);
+			$("#circle").html(result['active'][0]+'/'+result['active'][1]);
+			var prevClass = $('#div-circle').attr('class');
+			var newClass = "c100 p"+parseInt((result['active'][0]/result['active'][1])*100)+" small";
+			$("#div-circle").removeClass(prevClass).addClass(newClass);
+	      },
+              error: function(error) {
+		   var result = "Error";
+		   $("#circle").html('0/0');
+              }
+            });
+	    //alert(result);
+	}
+
+   </script>
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Summary
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+
+    <!-- Setting the active houst counter -->
+		{% set main_msg=[] %}
+    		{% with messages2 = get_flashed_messages(with_categories=true) %}
+       		   {% for tag,messages in messages2 %}
+          	      {% if tag=='result' %}
+			    {% if main_msg.append(messages) %}{% endif %}
+		      {% endif %}
+		   {% endfor %}
+		{% endwith %}
+	    
+	    <table style="table-layout: fixed;" border=0>
+	     <tr>
+
+	      <td align="center">
+		  <font size="15">{{ main_msg[0]['hosts']['active']|length }}</font>
+	      </td>
+
+	      <td style="width:10%"></td>
+
+	      <td align="left">
+		<div style="display:inline-block;text-align:left;" >
+		    <label for="rad1"><input id="rad1" type="radio" name="name"
+				value="all" onchange="show('all')"> All
+		    </label><br>
+		    <label for="rad2"><input id="rad2" type="radio" name="name"
+				value="active" checked onchange="show('active')"> Active
+		    </label><br>
+		    <label for="rad3"><input id="rad3" type="radio" name="name"
+		          value="inactive"  onchange="show('inactive')"> Inactive
+		    </label>
+                </div>
+	      </td>
+
+	      <td style="width:10%"></td>
+
+	      <td align="left">
+		<!--div style="display:inline-block;text-align:left;" >
+		 <form id="grp-form" name="grp-form" action="{{url_for('bhome')}}" method="post"> 
+                     {% for host in main_msg[0]['groups']['names'] %}
+                        <label for="{{ host }}"><input id="{{ host }}" type="checkbox" class="hosts"
+                                name="hosts" value="{{ host }}" onchange=""> {{ host }}
+                        </label><br>
+                     {% endfor %}
+		 </form>
+                </div-->
+	      </td>
+
+	      <td style="width:10%"></td>
+
+	      <td>
+	      </td>
+	     </tr>
+
+	      <!-- 2nd Row -->
+	      <tr>
+		 <td>
+		     <div style="border-top:2px solid green;">
+			<font color="" style="font-weight:bold;">Active Hosts</font>
+		     </div>
+		 </td>
+		 <td></td>
+		 <td>
+		     <div style="border-top:2px solid blue;">
+			<font color="" style="font-weight:bold;">Filter by activity</font>
+		     </div>
+		 </td>
+		 <td></td>
+		 <td>
+		     <!--div style="border-top:2px solid blue;">
+			<font color="" style="font-weight:bold;">Filter by group</font>
+		     </div-->
+		 </td>
+		 <td></td>
+		 <td>
+		 </td>
+	      </tr>
+
+	     </table><br>
+{% endblock %}
+
+	     
+{% block feature %}
+    {% set main_msg=[] %}
+    {% with messages2 = get_flashed_messages(with_categories=true) %}
+       {% for tag,messages in messages2 %}
+          {% if tag=='result' %}
+	     {% if main_msg.append(messages) %}{% endif %}
+             <div id="featured">
+
+               <form id="active-form" name="active-form" action="{{url_for('bhome')}}" method="post">
+                <table id="jj" class="active" style="width: 100%;" border=0>
+
+		 <!-- active-form ROW 1 -->
+                 <tr>
+                  <th colspan="100%"><font size="2px">Active Hosts</font></th>
+                 </tr>
+
+		 <!-- active-form ROW 2 -->
+                 <tr>
+                  <th style="padding-left:10px" align="left" colspan=1><!-- active-form ROW 2 controls-->
+		      <div style="display:inline-block;">Actions</div>
+		  </th>
+                  <th style="padding-left:10px" align="left" colspan=3><!-- active-form ROW 2 controls-->
+
+                      <button style="border:0; background-color: #30383B;" type="submit" name="act-submit" value="absent" title="Stop All">
+			      	<img src="/static/images/Up.png"/></button>
+                      <button style="border:0; background-color: #30383B;" type="submit" name="act-submit" value="stopped" title="Suspend All">
+			      	<img src="/static/images/pause.png"/></button>
+                      <button style="border:0; background-color: #30383B;" type="submit" name="act-submit" value="started" title="Start All">
+				<img src="/static/images/Exited.png"/></button>
+                      <button style="border:0; background-color: #30383B;" type="submit" name="act-submit" value="restarted" title="Restart All">
+				<img src="/static/images/refresh2.png"/></button>
+                      <button style="border:0; background-color: #30383B;" type="submit" name="act-submit" value="download" title="Download">
+				<img src="/static/images/dnld1.png"/></button>
+                  </th>
+
+                  <th style="min-width:50%" colspan="100%"><!-- active-form ROW 2 lessons -->
+                     <select style="width:100%; background-color:transparent; border-style: none; color:#fff; text-align: center;" 
+                             id="slc-lsn" name="slc-lsn" onchange="suggest(this.value);" >
+
+                          <option selected disabled hidden><font color="red">Choose lessons here</font></option>
+			{% for lesn in main_msg[0]['lesson']['desc'].keys()|sort %}
+                          <option style="color:#fff; text-align: left;" id="sad" value="{{lesn}}">
+				  {{ loop.index }}.&nbsp;&nbsp;{{ main_msg[0]['lesson']['desc'][lesn][0] }}
+			  </option>
+			{% endfor %}
+
+		     </select>
+		  </th>
+		 </tr>
+
+		 <!-- active-form ROW HIDDEN - save all info -->
+                 <tr style="display:none">
+                  <td>
+		     <input name="details" value="{{ main_msg[0]['groups'],main_msg[0]['lesson']['index'],main_msg[0]['status'] }}" />
+                  </td>
+                 </tr>
+
+		 <!-- active-form ROW 3 -->
+                 <tr>
+                  <th colspan=1>
+                       <label for="checkall">
+                          <input style="display:none" id="checkall" type="checkbox" name="checkall" value="" onchange="checker(this.checked)"/>
+                          Check
+                       </label>
+                  </th>
+                  <th colspan=1>Username</th>
+                  <th colspan=1>IP Address</th>
+                  <th colspan=1>Group</th>
+                  {% for lesson in main_msg[0]['lesson']['index'].keys()|sort %}
+                    {% for lsn in main_msg[0]['lesson']['index'][lesson] %}
+
+                      <!-- list lessons in dropdown -->
+		      <th name="default" class="default"></th>
+                      <th name={{lesson}} class="all-td" style="display:none">
+                         <label for="{{lsn}}" title="">
+                                <input id="{{lsn}}" type="checkbox" name="compchecker-{{lsn}}" style="display:none"
+                                       	class="compchecker-{{lsn}}" onchange="compchecker(this.checked,'{{lsn}}')" value="" />
+						{{ main_msg[0]['lesson']['desc'][lesson][loop.index*2] }}
+                         </label>
+                      </th>
+                    {% endfor %}
+                  {% endfor %}
+                 </tr>
+
+		<!-- active-form ROW 4  CONTENTS -->
+                {% for host in main_msg[0]['hosts']['active'] %}
+                  <tr id="tr-{{host}}" class="tr-active">
+                    <td>
+                       <label for="{{host}}">
+                          <input id="{{host}}" type="checkbox" name="check" class="check" value="{{ host }}" />
+                       </label>
+                    </td>
+                    <td><!-- Userid -->
+			{% set uname = [] %}
+			{% for name in main_msg[0]['status'] %}
+			   {% if name[0] == host and not uname %}
+				{% if uname.append(name[1]) %}{% endif %}
+			   {% endif %}
+			{% endfor %}
+			{{ uname[0]  }}
+		    </td>
+                    <td>{{ host }}</td><!-- IP -->
+                    <td>{{ main_msg[0]['groups']['map'][host]|join(', ') }}</td><!-- groupname -->
+
+                    {% for lesson in main_msg[0]['lesson']['index'] %}<!-- loop between main titles -->
+                      {% for lsn in main_msg[0]['lesson']['index'][lesson] %}<!-- loop between comp titles -->
+			 <td id="td-{{host+lsn}}" name="{{lesson}}" class="all-td" style="display:none;">
+			     <label for="{{host+lsn}}">
+				<div style="" id="div-{{host+lsn}}" class="div-{{lsn}}"
+				     {% set flag = [] %}
+				     {% for cont in main_msg[0]['status'] %}
+					{% if cont[0]==host and lsn==(cont[3]|replace('/','-')) %}
+					     {% if flag.append(1) %}{% endif %}
+					     {% if cont[5]=="Y" %}
+					        {% if cont[6]=="Y" %}title="Status : Started"><img id="img-{{host+lsn}}" src="/static/images/green.png"/>
+					        {% elif cont[6]=="N" %}title="Status : Stopped"><img id="img-{{host+lsn}}" src="/static/images/white.png"/>
+					        {% elif cont[6]=="S" %}title="Status : Suspended"><img id="img-{{host+lsn}}" src="/static/images/red.png"/>
+					        {% endif %}
+					     {% elif cont[5]=="N" %}title="Status : Downloading"><img id="img-{{host+lsn}}" src="/static/images/dnld4.png"/>
+					     {% endif %}
+					{% endif %}
+				     {% endfor %}
+				     {% if not flag %}title="Status : Component not downloaded"><img id="img-{{host+lsn}}" src="/static/images/dash.png"/>
+				     {% endif %}
+                                     <input id="{{host+lsn}}" class="{{lsn}}" type="checkbox" name="lsncheck" style="display:none"
+                                     	     class="{{lsn}}" value="{{ [lsn,host] }}" onchange="divcolor(this.checked,'{{host+lsn}}');"/>
+                                </div>
+                             </label>
+			 </td>
+                      {% endfor %}<!-- loop between main titles -->
+                    {% endfor %}<!-- loop between comp titles -->
+		  </tr>
+		{% endfor %}
+
+		</table>
+	       </form><!-- active form -->
+
+             </div> <!-- Main Div (block feature) -->
+	  {% endif %}
+
+
+
+
+       {% endfor %}
+    {% endwith %}
+{% endblock %}
+
+{% block xtra_feature %}
+   <script type="text/javascript">
+     function reload(){
+        var e = document.getElementById("slc-lsn");
+        var val = e.options[e.selectedIndex].value;
+        if (val.startsWith("lesson")) {
+           suggest(val);
+        }
+     }
+     show('active');
+     checkgrps();
+     reload();
+
+     jQuery(document).ready(function($) {
+       $(function() {
+          setInterval(function() {
+          },200);
+       });
+     });
+
+     function get_fb(){
+        var feedback = $.ajax({
+            type: "POST",
+            url: "/ajaxrequest/",
+            async: false
+        }).success(function(){
+            setTimeout(function(){get_fb();}, 5000);
+            }).responseText;
+
+        var result = JSON.parse(feedback);
+
+        //oldstuff
+        if (feedback!={}){
+           //get all current rows in the table for active hosts
+           var trall= document.getElementsByClassName('tr-active');
+           var addedhosts = [];
+
+           //loop through the results and make modification to the table
+           for (var i = 0; i < trall.length; i++){
+               var trhost = trall[i].id.slice(3); 
+               if (result['active'][0].indexOf(trhost)>=0) {
+                  addedhosts.push(trhost);
+
+                  for (var tblesn in result['result'][trhost]) {
+                      for ( var tbcomp in result['result'][trhost][tblesn]) {
+                          document.getElementById('div-'+tbcomp).title = result['result'][trhost][tblesn][tbcomp][1];    
+                          document.getElementById('img-'+tbcomp).src = result['result'][trhost][tblesn][tbcomp][2];    
+                      }
+                  }
+
+               } else {
+                  var row = document.getElementById('tr-'+trhost);
+		  //alert(row.id);
+                  row.parentNode.removeChild(row);
+               }
+
+           }
+
+           //add hosts into table
+           for (var val in result['active'][0]) {
+               val = result['active'][0][val];
+               if (addedhosts.indexOf(val)>=0) { } else {
+                  //create a new row to add host details
+                  var newrow = document.getElementById('jj').insertRow(-1);
+                  newrow.setAttribute("id","tr-"+val,0);
+                  newrow.setAttribute("class","tr-active",0);
+
+                  //create new td for checkbox
+                  var newtd = newrow.insertCell(-1);
+                   var newelem = document.createElement("label");
+                   newelem.setAttribute("for",val,0);
+                    var newcheck = document.createElement("input");
+                    newcheck.setAttribute("id",val,0);
+                    newcheck.setAttribute("type","checkbox",0);
+                    newcheck.setAttribute("name","check",0);
+                    newcheck.setAttribute("class","check",0);
+                    newcheck.setAttribute("value",val,0);
+                   newelem.appendChild(newcheck);
+                  newtd.appendChild(newelem);
+
+/*
+                  //create a new td to add userid
+                  var newtd = newrow.insertCell(-1);
+                  newtd.innerHTML = 'user';
+
+                  //create a new td to add ip
+                  var newtd = newrow.insertCell(-1);
+                  newtd.innerHTML = val;
+
+                  //create a new td to add ip
+                  var newtd = newrow.insertCell(-1);
+                  newtd.innerHTML = 'group';
+
+                  //add a new td for each lesson and component
+                  for (var tblesn in result['result'][val]) {
+                      for (var tbcomp in result['result'][val][tblesn]) {
+                        //create new td for lesson
+                        var newtd = newrow.insertCell(-1);
+                        newtd.setAttribute("id","td-"+tbcomp,0);
+                        newtd.setAttribute("name",tblesn,0);
+                        newtd.setAttribute("class","all-td",0);
+                        //check the selected lesson and set display attrib
+                        var e = document.getElementById("slc-lsn");
+                        var slcval = e.options[e.selectedIndex].value;
+                        if (slcval.startsWith("lesson") && tblesn==slcval) {
+                           newtd.setAttribute("style","display:true;",0);
+                        } else {
+                           newtd.setAttribute("style","display:none;",0);
+                        }
+                        var newelem = document.createElement("label");
+                        newelem.setAttribute("for",tbcomp,0);
+                          var div = document.createElement("div");
+                          div.setAttribute("id","div-"+tbcomp,0);
+                          //137.30.121.56lesson2-comp2 -> lesson2-comp2
+                          div.setAttribute("class","div-"+tblesn+'-'+tbcomp.split('-')[1],0);
+                          div.setAttribute("title",result['result'][val][tblesn][tbcomp][1],0);
+                            var img = document.createElement("img");
+                            img.setAttribute("id",tbcomp,0);
+                            img.setAttribute("src",result['result'][val][tblesn][tbcomp][2],0);
+                            var input = document.createElement("input");
+                            input.setAttribute("id",tbcomp,0);
+                            input.setAttribute("class",tblesn+'-'+tbcomp.split('-')[1],0);
+                            input.setAttribute("type","checkbox",0);
+                            input.setAttribute("name","lsncheck",0);
+                            input.setAttribute("style","display:noner;",0);
+                            var inpval=[tblesn+'-'+tbcomp.split('-')[1],val];
+                            input.setAttribute("value",inpval,0);
+                            //input.setAttribute("onchange",function(){alert(this.checked);},0);
+                            input.addEventListener('change',function(){
+                                                                       if (this.checked){ this.parentNode.style.background='#f5ccff'; }
+                                                                       else { this.parentNode.style.background=''; }
+                                                                      },false);
+                          div.appendChild(img);
+                          div.appendChild(input);
+                        newelem.appendChild(div);
+                        newtd.appendChild(newelem);
+                     }
+                  }*/
+               }
+           }
+                
+        }
+
+     }
+
+
+     get_fb();
+
+   </script>
+{% endblock %}
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li class="current_page_item"><a href="{{url_for('bhome')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('create')}}" accesskey="3" title="">Lessons</a></li>
+{% endblock %}

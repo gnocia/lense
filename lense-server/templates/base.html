@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Skeleton 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130902
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Lense</title>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+  <link href="/static/default.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="/static/fonts.css" rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+<div id="page" class="container">
+	<div id="main2">
+		<div id="welcome">
+			<div class="title">
+				<img src="/static/images/lense.jpg"/>
+				<h1>Lense</h1>
+			</div>
+		</div>
+		<div id="featured">
+		     <div id="content">
+            		  {% block body %}{% endblock %}
+        	     </div>
+
+        	     <div id="nav">
+            	          <ul>
+                	      {% block nav1 %}{% endblock %}
+            		  </ul>
+        	     </div>
+
+		     <div id="copyright">
+			  <span>&copy; UNO. All rights reserved.</span>
+		     </div>
+		</div>
+	</div>
+</div>
+</body>
+</html

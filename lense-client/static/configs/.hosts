@@ -1,0 +1,2 @@
+[temp]
+192.168.43.195 ansible_ssh_user=osboxes

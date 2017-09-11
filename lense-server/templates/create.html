@@ -1,0 +1,264 @@
+{% extends "base2.html" %}
+
+############################################
+#set page title
+############################################
+{% block title %}
+   Lessons
+{% endblock %}
+
+############################################
+#set for <head>
+############################################
+{% block head %}
+   <title>Lense: Lessons</title>
+   <script type="text/javascript">
+	function suggest(val1,val2){
+		document.getElementById(val1).style.display="none";
+		document.getElementById(val2).style.display="";
+	}
+	function suggest2(val1,val2){
+	    if (val2 == 'Create'){
+		document.getElementById('lsn_name').style.display="";
+		document.getElementById('slc-lsn').style.display="none";
+		document.getElementById('lsn_name').value="";
+		document.getElementById('lsn_title').value="";
+		document.getElementById('lsn_desc').value="";
+		document.getElementById('lsn_text').value="";
+	    }
+	    else if (val2 == 'Edit'){
+		document.getElementById('lsn_name').style.display="none";
+		document.getElementById('slc-lsn').style.display="";
+	    }
+	}
+	function suggest3(val1){
+	    var element = val1.split('$@$')
+	    document.getElementById('lsn_name').value=element[0];
+	    document.getElementById('lsn_title').value=element[1];
+	    document.getElementById('lsn_desc').value=element[2];
+	    document.getElementById('lsn_text').value=element.slice(3,element.length).toString();
+	}
+        function suggest4(val1,val2){
+            if (val2 == 'Create'){
+                document.getElementById('comp_name_Create').style.display="";
+                document.getElementById('comp_name_Edit').style.display="none";
+                document.getElementById('td_Create').style.display="";
+                document.getElementById('comp_name').style.display="";
+                //document.getElementById('slc-comp').style.display="none";
+                document.getElementById('comp_name').value="";
+                document.getElementById('comp_title').value="";
+                document.getElementById('comp_desc').value="";
+                document.getElementById('comp_text').value="";
+            }
+            else if (val2 == 'Edit'){
+                document.getElementById('comp_name_Create').style.display="none";
+                document.getElementById('comp_name_Edit').style.display="";
+                document.getElementById('td_Create').style.display="none";
+                document.getElementById('comp_name').style.display="none";
+                //document.getElementById('slc-comp').style.display="";
+            }
+        }
+	function suggest5(val1){
+	    var element = val1.split('$@$')
+	    document.getElementById('comp_name').value=element[0];
+	    document.getElementById('comp_title').value=element[1];
+	    document.getElementById('comp_desc').value=element[2];
+	}
+
+   </script>
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+    {% set main_msg=[] %}
+    {% with messages2 = get_flashed_messages(with_categories=true) %}
+       {% for tag,messages in messages2 %}
+          {% if tag=='result' %}
+                {% if main_msg.append(messages) %}{% endif %}
+          {% endif %}
+       {% endfor %}
+    {% endwith %}
+
+    <table style="table-layout: fixed;width:100%" border=0>
+	<tr>
+	    <td style="width:30%; vertical-align: top;" align="right">
+		Category : 
+	    </td>
+	    <td align="left">
+		<label><input type="radio" name="type" value="lesson" onchange="suggest('comp','lesson')" checked> Lesson</label><br>
+		<label><input type="radio" name="type" value="component" onchange="suggest('lesson','comp')" > Component</label><br><br>
+	    </td>
+	</tr>
+    </table>
+
+    <form id="form1" action="{{url_for('create')}}" method="post">
+        <table id="lesson" style="table-layout: fixed;width:100%" border=0>
+	 <tr>
+	    <td style="width:30%; vertical-align: top;" align="right">
+		Action:
+	    </td>
+	    <td align="left">
+		<label><input type="radio" name="lsn" value="create" onchange="suggest2('lsn','Create')" checked> Create</label><br>
+		<label><input type="radio" name="lsn" value="edit" onchange="suggest2('lsn','Edit')" > Edit</label><br><br>
+	    </td>
+	 </tr>
+	 <tr>
+	    <td style="width:30%" align="right">
+		Lesson Name:
+	    </td>
+	    <td align="left">
+	        <input id='lsn_name' name='lsn_name' type="text" style="width:80%" value='' />
+                <select style="width:80%; background-color:'#fff'; display: none; color:''; text-align: left;" 
+                        id="slc-lsn" name="slc-lsn" onchange="suggest3(this.value);" >
+                   <option selected disabled hidden><font color="red">Choose lesson title</font></option>
+                   {% for key in main_msg[0]['index'].keys()|sort %}
+                      <option style="color:''; text-align: left;" id="lsn_slc" value="{{key}}$@${{main_msg[0]['desc'][key]|join('$@$')}}$@${{main_msg[0]['index'][key]|join('$@$')}}">
+                              {{ loop.index }}.&nbsp;&nbsp;{{ key }}
+                      </option>
+                   {% endfor %}
+		</select>
+	    </td>
+	 </tr>
+	 <tr>
+	    <td style="width:30%" align="right">
+		Lesson Title:
+	    </td>
+	    <td align="left">
+	        <input id='lsn_title' name='lsn_title' type="text" style="width:80%" value='' />
+	    </td>
+	 </tr>
+	 <tr>
+	    <td style="width:30%; vertical-align: top;" align="right" >
+		Description:
+	    </td>
+	    <td align="left">
+	        <textarea id='lsn_desc' name='lsn_desc' style="width:80%;height:80px; resize:none; white-space: pre-wrap;"></textarea>
+	    </td>
+	 </tr>
+	 <tr>
+	    <td style="width:30%; vertical-align: top;" align="right">
+		Components:
+	    </td>
+	    <td align="left">
+	        <textarea id='lsn_text' name='lsn_text' style="width:80%;height:80px; resize: none;"></textarea>
+	    </td>
+	 </tr>
+         <tr>
+            <td style="width:30%; vertical-align: top;" align="right">
+            </td>
+            <td align="left">
+                <input style="background-color:green; border-radius:5px;color:#fff;" id='submit' name='submit' type="submit" value="Sync"/>
+                <input style="background-color:darkred; border-radius:5px;color:#fff;" id='delete' name='submit' type="submit" value="Delete"/>
+            </td>
+         </tr>
+        </table>
+    </form>
+
+    <form id="form2" action="{{url_for('create')}}" method="post">
+        <table id="comp" style="table-layout: fixed;width:100%;display:none;" border=0>
+         <tr>
+	    <td style="width:30%; vertical-align: top;" align="right">
+                Action:
+            </td>
+	    <td align="left">
+		<label><input type="radio" name="comp" value="create" onchange="suggest4('comp','Create')" checked> Create</label><br>
+		<label><input type="radio" name="comp" value="edit" onchange="suggest4('comp','Edit')" > Edit</label><br><br>
+	    </td>
+         </tr>
+         <tr>
+	    <td style="width:30%; vertical-align: top;" align="right">
+                <div id="comp_name_Create" style="display:inone">Base Component:</div>
+                <div id="comp_name_Edit" style="display:none">Component Name:</div>
+            </td>
+	    <td align="left">
+                <!--input id='comp_name' name='comp_name' type="text" style="width:80%" value='' /-->
+                <select style="width:80%; background-color:'#fff'; display: inone; color:''; text-align: left;" 
+                        id="slc-comp" name="slc-comp" onchange="suggest5(this.value);" >
+                   <option selected disabled hidden><font color="red">Choose lesson title</font></option>
+                   {% for key in main_msg[0]['index'].keys()|sort %}
+		     {% for item in main_msg[0]['index'][key]: %}
+			{{item}}
+                        <option style="color:''; text-align: left;" id="lsn_slc" value="{{item}}$@${{main_msg[0]['desc'][item]|join('$@$')}}">
+                              &nbsp;&nbsp;{{ item }}
+                        </option>
+                     {% endfor %}
+                   {% endfor %}
+		   {% for item in main_msg[0]['xtra']: %}
+                        <option style="color:''; text-align: left;" id="lsn_slc" value="{{item}}$@${{main_msg[0]['xtra'][item]|join('$@$')}}">
+                              &nbsp;&nbsp;{{ item }}
+                        </option>
+                   {% endfor %}
+		</select>
+            </td>
+         </tr>
+         <tr id="td_Create">
+            <td style="width:30%" align="right">
+                 Component Name:
+            </td>
+            <td align="left">
+                <input id='comp_name' name='comp_name' type="text" style="width:80%" value='' />
+            </td>
+         </tr>
+         <tr>
+            <td style="width:30%" align="right">
+                Component Title:
+            </td>
+            <td align="left">
+                <input id='comp_title' name='comp_title' type="text" style="width:80%" value='' />
+            </td>
+         </tr>
+         <tr>
+            <td style="width:30%; vertical-align: top;" align="right" >
+                Description:
+            </td>
+            <td align="left">
+                <textarea id='comp_desc' name='comp_desc' style="width:80%;height:80px; resize: none;"></textarea>
+            </td>
+         </tr>
+         <!--tr>
+            <td style="width:30%; vertical-align: top;" align="right">
+                Dockerfile:
+            </td>
+            <td align="left">
+                <textarea id='comp_text' name='comp_text' style="width:80%;height:80px; resize: none;"></textarea>
+            </td>
+         </tr-->
+         <tr>
+            <td style="width:30%; vertical-align: top;" align="right">
+            </td>
+            <td align="left">
+                <input style="background-color:green; border-radius:5px;color:#fff;" id='submit' name='submit' type="submit" value="Sync"/>
+                <input style="background-color:darkred; border-radius:5px;color:#fff;" id='delete' name='submit' type="submit" value="Delete"/>
+            </td>
+         </tr>
+        </table>
+    </form>
+
+{% endblock %}
+
+
+{% block feature %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+              <table style="table-layout: fixed;width:100%" border=0>
+              </table>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block xtra_feature %}
+   <script type="text/javascript">
+	suggest('comp','lesson');
+   </script>
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('bhome')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li class="current_page_item"><a href="{{url_for('create')}}" accesskey="3" title="">Lessons</a></li>
+{% endblock %}

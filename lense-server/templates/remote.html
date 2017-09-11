@@ -1,0 +1,258 @@
+{% extends "base2.html" %}
+
+############################################
+#set page title
+############################################
+{% block title %}
+   Remote
+{% endblock %}
+
+############################################
+#set for <head>
+############################################
+{% block head %}
+   <script type="text/javascript">
+	function suggest(){
+		var form=document.getElementById('form1')
+		var radio=form['radio'].value;
+		var tgt="";
+
+		//Hide everything
+		var id="", ids=['script','target','playbook','service',
+				   'status','group','src_1','src_2','src_3']
+		for (id in ids) 
+		    form[ids[id]].style.display='none';
+
+ 		if (radio=='ping') {
+		   tgt=form['target'].value;
+
+		   //make target visible
+		   form['target'].style.display='inline';
+
+		   targeter(form,tgt);
+		}
+ 		else if (radio=='service') {
+		   tgt=form['service'].value;
+
+		   //make service visible
+		   form['service'].style.display='inline';
+		   form['status'].style.display='inline';
+
+                   if (tgt=='docker'){
+                      form['target'].style.display='inline';
+		      tgt=form['target'].value;
+		      targeter(form,tgt);
+                   }
+                   else if (tgt=='other'){
+                      form['target'].style.display='inline';
+		      form['src_3'].style.display='inline';
+		      tgt=form['target'].value;
+		      targeter(form,tgt);
+		   }
+                }
+                else if (radio=='script') {
+                   //make script visible
+                   form['script'].style.display='inline';
+                   form['target'].style.display='inline';
+                   tgt=form['target'].value;
+                   targeter(form,tgt);
+                }
+                else if (radio=='play') {
+                   //make script visible
+                   form['playbook'].style.display='inline';
+                   form['target'].style.display='inline';
+                   tgt=form['target'].value;
+                   targeter(form,tgt);
+                }
+                else if (radio=='cont') {
+                   //make script visible
+                   form['status'].style.display='inline';
+                   form['target'].style.display='inline';
+                   tgt=form['target'].value;
+                   targeter(form,tgt);
+                }
+		else {
+		   alert("adas");
+		}
+	}
+	function targeter(form,tgt){
+                      if (tgt=='all'){
+                      }
+                      else if (tgt=='group'){
+                         form['group'].style.display='inline';
+                      }
+                      else if (tgt=='ip'){
+                         form['src_1'].style.display='inline';
+                      }
+	}
+   </script>
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ imessages }}
+    <form id="form1" action="{{url_for('remote')}}" method="post">
+        <table style="table-layout: fixed;width:100%" border=0>
+         <tr><th width="25%">
+          <div align="left">
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][1][0]=='ping' %}checked="checked"{% endif %} id="radio1" name="radio" value="ping" onclick = "suggest()">Ping Host</label>
+	  </div>
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][1][0]=='script' %}checked="checked"{% endif %} id="radio3" name="radio" value="script" onclick = "suggest()">Execute Script</label>
+	  </div>
+	  <div class="radio" >
+	    <label><input type="radio" {% if messages[0][1][0]=='service' %}checked="checked"{% endif %} id="radio2" name="radio" value="service" onclick = "suggest()">Manage Service</label>
+  	  </div>
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][1][0]=='local' %}checked="checked"{% endif %} id="radio4" name="radio" value="play" onclick = "suggest()">Execute Playbook</label>
+	  </div>
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][1][0]=='public' %}checked="checked"{% endif %} id="radio5" name="radio" value="cont" onclick = "suggest()">Manage Containers</label>
+	  </div></div>
+	 </th><th>
+           <!--div-->
+
+	   <!-- Populating the dropdown selectors -->
+	   <div id="div_script" >
+		<select id="script" name="script" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select script</option>
+		  {% for tag, message in messages[1:] %}
+		     {% if tag=="script" %}
+		        {% set options = message.split() %}
+		        {% for option in options %}
+		           <option id="scpt_{{ option.split()[0] }}" value="{{ option }}">{{ option }}</option>
+		        {% endfor %}
+		     {% endif %}
+                  {% endfor %}
+		</select>
+	   </div>
+
+           <div id="div_play">
+                <select name="playbook" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select playbook</option>
+                  {% for tag, message in messages[1:] %}
+                     {% if tag=="playbook" %}
+                        {% set options = message.split() %}
+                        {% for option in options %}
+                           <option id="ply_{{ option.split()[0] }}" value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                     {% endif %}
+                  {% endfor %}
+                </select>
+           </div>
+
+	   <div id="div_svc">
+		<select name="service" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select service</option>
+		  <option id="svc_docker" value="docker">Docker</option>
+		  <option id="svc_other" value="other">Other</option>
+		</select>
+	   </div>
+           <div><input id="src_3" style="align:left;" type="text" name="search3" value="{{ messages[0][1] }}" style="width:85%;"/></div>
+
+	   <div id="div_sts">
+		<select name="status" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select status</option>
+		  <option id="sts_start" value="started">Start</option>
+		  <option id="sts_stop" value="stopped">Stop</option>
+		  <option id="sts_restart" value="restarted">Restart</option>
+		  <option id="sts_" disabled>---------------</option>
+		  <option id="sts_cmt" value="commit">Commit</option>
+		  <option id="sts_hst" value="history">History</option>
+		</select>
+	   </div>
+
+	   <div id="div_tgt">
+		<select name="target" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select target</option>
+		  <option id="tgt_all" value="all">All</option>
+		  <option id="tgt_group" value="group">Groups</option>
+		  <option id="tgt_ip" value="ip">IP Address</option>
+		</select>
+	   </div>
+
+	   <div id="div_grp">
+		<select name="group" onclick="suggest()" style="width:85%;">
+		  <option selected hidden>Select a Group</option>
+                  {% for tag, message in messages[1:] %}
+                     {% if tag=="group" %}
+			{% for option in message %}
+                           <option id="grp_{{ option }}" value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                     {% endif %}
+                  {% endfor %}
+		</select>
+	   </div>
+
+           <div><input id="src_1" style="align:left;" type="text" name="search1" value="{{ messages[0][1] }}" style="width:85%;"/></div>
+           <div><input id="src_2" style="align:left;" type="text" name="search2" value="{{ messages[0][1] }}" style="width:85%;"/></div>
+           <!--a>&nbsp;&nbsp;</a-->
+	 </th><th>
+           <input type="submit" value="Execute" />
+         </th></tr>
+       </table>
+  {% endwith %}
+{% endblock %}
+
+
+                <div id="featured">
+                </div>
+
+{% block feature %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div align="left">
+                 <p><br></p>
+
+                 <table style="table-layout: fixed;width:100%" border=0>
+                  <tr>
+                    <th width="20%">Status</th>
+                    <th>IP Address</th>
+                    <th>Comment</th>
+                  </tr>
+                  {% for message in messages[1:] %}
+                    {% if message[0]=='group' %}
+		       {% set grp=message[1] %}	
+                    {% elif message[0]=='output' %}
+                      {% for msg in message[1] %}
+                       <tr>
+                        <td align="">
+			    {% if msg[1]=='SUCCESS' %}Up{% else %}n/a{% endif %}
+			</td>
+                        <td align="">
+			    {{ msg[0]}} [{{ grp[0] }}]
+			</td>
+                        <td align="">
+			    {% if msg[1]=='SUCCESS' %}n/a{% else %}{{ msg[1] }}{% endif %}
+			</td>
+                       </tr>
+                     {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    {% endwith %}
+   </form>
+{% endblock %}
+
+{% block xtra_feature %}
+   <script type="text/javascript">
+     suggest();
+   </script>
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li class="current_page_item"><a href="{{url_for('remote')}}" accesskey="3" title="">Remote</a></li>
+    <li><a href="{{url_for('cont')}}" accesskey="4" title="">Containers</a></li>
+    <li><a href="{{url_for('manage')}}" accesskey="5" title="">Manage</a></li>
+{% endblock %}

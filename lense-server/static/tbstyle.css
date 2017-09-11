@@ -1,0 +1,53 @@
+/*** CSS of Pricing Table ***/
+
+/** Start of General **/
+
+/* Background */
+
+body { background-image:url("images/texture.jpg"); background-position: center top; background-repeat: no-repeat; background-attachment: fixed; position:relative; min-width:1400px; font-family: "Sans"; font-size:18px; }
+
+/** End of General **/
+
+
+/*--------------------------------------------------------------------------------------------------------------*/
+
+/** Pricing Table (You need this. Anything else above is just for background) **/
+
+table#jj {
+	//width:814px;
+	//height:320px;
+	border-spacing: 0;
+	margin: 1em auto;
+	font-family: "Sans"; 
+	font-size:11px; 
+}
+
+th{
+	//width:304px;
+	//height:43px;
+	outline:none;
+	background: #30383b; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	color:white;
+	border-top: 1px solid #484d50;
+	border-bottom: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #484d50;
+
+}
+
+/*th:first-child{ /* You can enable it or remove it and you will see, what it change :) */
+	background:none;
+	border:none;
+	font-size:0px;
+}*/
+
+td {
+	//width:104px;
+	height:33px;
+	text-align: center;
+	color:#31383b;
+	border: 1px solid #d9d9d9;
+
+}
+

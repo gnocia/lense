@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body %}
+    <!--h1>Welcome!</h1-->
+    {% if 'username' in session %}
+        <!--p>Welcome back {{session['username']}}!</p-->
+        <form action="{{url_for('index')}}" method="post">
+            <input type="submit" name="logout" value="logout" />
+        </form>
+    {% else %}
+	<table style="table-layout: fixed;width:100%" border=0>
+	  <tr>
+	    <th width="65%" align="left">
+		A lightweight platform for creating and delivering hands-on cybersecurity in a classroom environment.
+		<div>&nbsp;</div>
+		<div style="font-weight:normal;"><img src="/static/images/tick.png"/> create and share exercises</div>
+		<div style="font-weight:normal;"><img src="/static/images/tick.png"/> low resource requirements</div>
+		<div style="font-weight:normal;"><img src="/static/images/tick.png"/> easy to use and simple to learn</div>
+	    </th>
+	    <th align="right">
+		<table border=3 cellpadding="10px" style="background-color:#003399;border-radius: 25px;">
+		<tr><th>
+	<h3><p><font color="#ffffff">Sign in to Lense</font></p></h3>
+	<form action="{{url_for('index')}}" method="post">
+	    <p><font color="#ffffff">Username:</font><br />
+	            <input type="text" name="username" /></p>
+	            <p><font color="#ffffff">Password:</font><br />
+	            <input type="password" name="passwd" /></p>
+		    <p><button type="submit" name="Submit" value="Submit" style="border:0;background-color:#003399"><img src="/static/images/login.png" height="26px"/></button>
+	        </form>
+		</th></tr></table>
+	    </th>
+	  </tr>
+	</table>
+
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            {{message}}
+        {% endfor %}
+    {% endwith %}
+{% endblock %}

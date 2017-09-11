@@ -1,0 +1,11 @@
+#variables for registry
+registry = "server.domain.com"
+regmail = "user@mail.com"
+reguser = ""
+regpas = ""
+
+#variables for database access
+dbhost = "IP or hostname of server"
+dbuser = ""
+dbpasswd = ""
+

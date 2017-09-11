@@ -1,0 +1,43 @@
+{% extends "base2.html" %}
+{% block body %}
+    <h>Remote Control</h>
+    Enter code to execute:
+    <form action="{{url_for('home')}}" method="post">
+        <input type="text" name="expression" />
+        <p>var1</p>
+        <input type="text" name="expression1" />
+        <p>var2</p>
+        <input type="text" name="expression2" />
+        <p>var3</p>
+        <input type="text" name="expression3" />
+        <p>var4</p>
+        <input type="text" name="expression4" />
+
+<br>
+<div class="dropdown1">
+  <span>Mouse over me</span>
+  <div class="dropdown-content1">
+    <p>Option 1</p>
+    <p>Option 2</p>
+  </div>
+</div>
+<br>
+<br>
+<br>
+        <input type="submit" value="Execute" />
+    </form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            Results:
+            <pre>
+                {% for message in messages %}
+{{ message }}
+                {% endfor %}
+            </pre>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li class="current_page_item"><a href="{{url_for('remote')}}" accesskey="2" title="">Container</a></li>
+{% endblock %}

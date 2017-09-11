@@ -1,0 +1,53 @@
+{% extends "base2.html" %}
+
+############################################
+#set page title
+############################################
+{% block title %}
+   Create Lesson
+{% endblock %}
+
+############################################
+#set for <head>
+############################################
+{% block head %}
+   <script type="text/javascript">
+   </script>
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {{ imessages }}
+    <form id="form1" action="{{url_for('create')}}" method="post">
+        <table style="table-layout: fixed;width:100%" border=1>
+        </table>
+    </form>
+  {% endwith %}
+{% endblock %}
+
+
+{% block feature %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+              <table style="table-layout: fixed;width:100%" border=0>
+              </table>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block xtra_feature %}
+   <script type="text/javascript">
+   </script>
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('bhome')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li class="current_page_item"><a href="{{url_for('create')}}" accesskey="3" title="">Create Lesson</a></li>
+{% endblock %}

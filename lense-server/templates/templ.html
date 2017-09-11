@@ -1,0 +1,35 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Manage
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+{% endblock %}
+
+{% block feature %}
+    {% with messages = get_flashed_messages() %}
+    {% endwith %}
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('remote')}}" accesskey="3" title="">Remote</a></li>
+    <li><a href="{{url_for('cont')}}" accesskey="4" title="">Containers</a></li>
+    <li class="current_page_item"><a href="{{url_for('manage')}}" accesskey="5" title="">Manage</a></li>
+{% endblock %}

@@ -1,0 +1,281 @@
+{% extends "base2.html" %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <title>Lense: Manage</title>
+   <link href="/static/tbstyle.css" rel="stylesheet" type="text/css" />
+   <script type="text/javascript">
+        function suggest1(){
+          document.getElementById('hosts-').style.display='inline-block';
+          document.getElementById('tblhosts').style.display='';
+          document.getElementById('hosts+').style.display='none';
+        }
+        function suggest2(){
+          document.getElementById('hosts-').style.display='none';
+          document.getElementById('tblhosts').style.display='none';
+          document.getElementById('hosts+').style.display='inline-block';
+        }
+        function suggest3(var1){
+          document.getElementById(var1+'+').style.display='none';
+          document.getElementById(var1+'-').style.display='inline-block';
+
+          var elements = document.getElementsByClassName(var1), i;
+          for (var i = 0; i < elements.length; i ++) {
+             elements[i].style.display = 'none';
+	  }
+	}
+        function suggest4(var2){
+          //document.getElementById(var2).style.display='none';
+          document.getElementById(var2+'+').style.display='inline-block';
+          document.getElementById(var2+'-').style.display='none';
+
+          var elements = document.getElementsByClassName(var2), i;
+          for (var i = 0; i < elements.length; i ++) {
+             elements[i].style.display = '';
+	  }
+	}
+        function suggest5(){
+          document.getElementById('script-').style.display='inline-block';
+          document.getElementById('tblscript').style.display='';
+          document.getElementById('script+').style.display='none';
+        }
+        function suggest6(){
+          document.getElementById('script-').style.display='none';
+          document.getElementById('tblscript').style.display='none';
+          document.getElementById('script+').style.display='inline-block';
+        }
+        function suggest7(){
+          document.getElementById('playb-').style.display='inline-block';
+          document.getElementById('tblplayb').style.display='';
+          document.getElementById('playb+').style.display='none';
+        }
+        function suggest8(){
+          document.getElementById('playb-').style.display='none';
+          document.getElementById('tblplayb').style.display='none';
+          document.getElementById('playb+').style.display='inline-block';
+        }
+	function suggest9(var1){
+	  suggest3(var1);
+	  document.getElementById(var1+'-').style.display='none';
+	  document.getElementById(var1+'-ta').style.display='';
+	  document.getElementById(var1+'-sv').style.display='';
+	  document.getElementById(var1+'-e').style.display='none';
+	  document.getElementById(var1+'-c').style.display='';
+	}
+	function suggest10(var1){
+	  suggest4(var1);
+	  document.getElementById(var1+'-ta').style.display='none';
+	  document.getElementById(var1+'-sv').style.display='none';
+	  document.getElementById(var1+'-c').style.display='none';
+	  document.getElementById(var1+'-e').style.display='';
+	}
+        function suggest11(var1){
+          document.getElementById('add+').style.display='none';
+          document.getElementById('add-').style.display='inline';
+          document.getElementById('add-inp').style.display='';
+          document.getElementById('add-inp').value='Add Group name';
+          document.getElementById('add-ta').style.display='';
+          document.getElementById('add-ta').value='Add IPs line by line';
+          document.getElementById('add-sv').style.display='';
+          document.getElementById('add-lbl').style.display='none';
+        }
+        function suggest12(var1){
+          document.getElementById('add+').style.display='inline';
+          document.getElementById('add-').style.display='none';
+          document.getElementById('add-inp').style.display='none';
+          document.getElementById('add-ta').style.display='none';
+          document.getElementById('add-sv').style.display='none';
+          document.getElementById('add-lbl').style.display='';
+        }
+	function suggest13(var1){
+	  if (var1.trim() == '' || var1.trim() == 'Add Group name'){
+	     document.getElementById('add-inp').value=''
+	  }
+	}
+	function suggest14(var1){
+	  if (var1.trim() == '' || var1.trim() == 'Add IPs line by line'){
+	     document.getElementById('add-ta').value=''
+	  }
+	}
+   </script>
+{% endblock %}
+############################################
+#set page title
+############################################
+{% block title %}
+   Manage
+{% endblock %}
+
+############################################
+#set page contents
+############################################
+{% block body %}
+{% endblock %}
+
+{% block feature %}
+    {% with messages2 = get_flashed_messages(with_categories=true) %}
+      <table id="jj" class="active" style="width: 100%;" border=0>
+        <tr style="outline: thin solid #d7dbe1;" align="left">
+           <th colspan="2">
+	       <div id='hosts+' style="display:inline-block; style="align:left;"" onclick="suggest1()">
+		<label >[+]</label>
+	       </div>
+	       <div id='hosts-' style="display:none;" onclick="suggest2()">
+		<label>[-]</label>
+	       </div>&nbsp;&nbsp;Hosts
+	   </th>
+	</tr>
+	<tr align="left">
+	   <td style="width:4%"></td>
+	   <td style="width:96%">
+
+      	       <table id="tblhosts" style="border-collapse:collapse; width:100%; display:none;" border=0>
+      		{% for tag, messages in messages2 %}
+	        {% if tag=='hosts' %}
+		  {% for msg in messages %}
+                  <tr style="outline: thin solid #e1eae1;" align="left">
+                    <td style="align:left;" colspan="2">
+			<div id='{{ msg[0] }}+' style="display:none;" onclick="suggest3('{{ msg[0] }}')"><label>[-]</label></div>
+	                <div id='{{ msg[0] }}-' style="display:inline;" onclick="suggest4('{{ msg[0] }}')"><label>[+]</label></div>
+	                &nbsp;&nbsp;<font color="#53668c">{{ msg[0] }}</font>
+	            </td>
+		    <td>
+	            </td>
+		    <td>
+			<div id='{{ msg[0] }}-e' align="right" style="display:rnline;" onclick="suggest9('{{ msg[0] }}')"><label>Edit</label></div>
+			<div id='{{ msg[0] }}-c' align="right" style="display:none;" onclick="suggest10('{{ msg[0] }}')"><label>Cancel</label></div>
+	            </td>
+	          </tr>
+		  {% for m in msg[1:] %}
+		     <tr class="{{ msg[0] }}" style="display:none;" align="left">
+		       <td style="width:4%"></td>
+		       <td style="width:30%">{{ m }}</td>
+		       <td style="width:30%"></td>
+		       <td style="width:36%"></td>
+		     </tr>
+	  	  {% endfor %}
+		     <tr>
+		      <td>
+		       <form id="form-{{ msg[0] }}" action="{{url_for('save')}}" method="post">
+		        <div style="display:inline-block">
+			 <textarea id="{{ msg[0] }}-ta" form="form-{{ msg[0] }}" name="textarea" style="text-align: left; display:none" rows="10" cols="20">
+			  {% for m in msg[1:] %}
+			    {% if m %}{{ m }}{% endif %}
+			  {% endfor %}
+			 </textarea>
+		        </div>	
+		        <div style="display:inline-block">
+		 	  <div id="{{ msg[0] }}-sv" style="display:none">
+		 	    <button form="form-{{ msg[0] }}" type="submit" name="submit" value="{{ msg[0] }}" data-toggle="tooltip" title="Save">
+				Save
+			    </button>
+			  </div>
+		        </div>	
+		       </form>
+		      </td>
+		     </tr>
+	  	 {% endfor %}
+		{% endif %}
+	        {% endfor %}
+                  <tr style="outline: thin solid #e1eae1;" align="left">
+                    <td style="align:left;" colspan="2">
+	                <div id='add+' style="display:inline;" onclick="suggest11('add')"><label>[+]</label></div>
+	                <div id='add-' style="display:none;" onclick="suggest12('add')"><label>[-]</label></div>
+	                &nbsp;&nbsp;<font id="add-lbl" color="#e3668c">Add Group</font><input id="add-inp" form="form-add" style="display:none" name="add-inp" onfocus= "suggest13(this.value)" />
+		    </td>
+		  </tr>
+		  <tr>
+		    <td>
+		       <form id="form-add" action="{{url_for('save')}}" method="post">
+		        <div style="display:inline-block">
+		          <textarea id="add-ta" form="form-add" name="textarea" style="text-align: left; display:none" onfocus="suggest14(this.value)" rows="10" cols="20"></textarea>
+		        </div>	
+		        <div style="display:inline-block">
+		 	  <div id="add-sv" style="display:none">
+		 	    <button form="form-add" type="submit" name="submit" value="add-submit" data-toggle="tooltip" title="Save">
+				Save
+			    </button>
+			  </div>
+		        </div>	
+		    </td>
+		  </tr>
+
+		  <tr><td><br></td></tr>
+	       </table>
+
+           </td>
+	</tr>
+
+        <tr style="outline: thin solid #d7dbe1;" align="left">
+           <th style="align:left;" colspan="2"><div id='script+' style="display:inline-block;" onclick="suggest5()">
+                <label>[+]</label>
+               </div><div id='script-' style="display:none;" onclick="suggest6()">
+                <label>[-]</label>
+               </div>&nbsp;&nbsp;Scripts
+           </th>
+        </tr>
+        <tr align="left">
+           <td style="width:4%"></td>
+           <td style="width:96%">
+
+               <table id="tblscript" style="border-collapse:collapse; width:100%; display:none;" border=0>
+                {% for tag, messages in messages2 %}
+                {% if tag=='script' %}
+                  {% for msg in messages %}
+		     <tr align="left">
+		       <td style="width:4%"></td>
+		       <td style="width:30%">{{ msg[0] }}</td>
+		       <td style="width:30%">{{ msg[1] }}</td>
+		       <td style="width:36%"></td>
+		     </tr>
+		  {% endfor %}
+		{% endif %}
+		{% endfor %}
+	       </table>
+	   </td>
+        </tr>
+
+        <tr style="outline: thin solid #d7dbe1;" align="left">
+           <th style="align:left;" colspan="2"><div id='playb+' style="display:inline-block;" onclick="suggest7()">
+                <label>[+]</label>
+               </div><div id='playb-' style="display:none;" onclick="suggest8()">
+                <label>[-]</label>
+               </div>&nbsp;&nbsp;Playbook
+           </th>
+        </tr>
+        <tr align="left">
+           <td style="width:4%"></td>
+           <td style="width:96%">
+
+               <table id="tblplayb" style="border-collapse:collapse; width:100%; display:none;" border=0>
+                {% for tag, messages in messages2 %}
+                {% if tag=='playb' %}
+                  {% for msg in messages %}
+		     <tr align="left">
+		       <td style="width:4%"></td>
+		       <td style="width:30%">{{ msg }}</td>
+		       <td style="width:36%"></td>
+		     </tr>
+		  {% endfor %}
+		{% endif %}
+		{% endfor %}
+	       </table>
+	   </td>
+        </tr>
+
+      </table>
+    {% endwith %}
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+    <li><a href="{{url_for('remote')}}" accesskey="3" title="">Remote</a></li>
+    <li><a href="{{url_for('cont')}}" accesskey="4" title="">Containers</a></li>
+    <li class="current_page_item"><a href="{{url_for('manage')}}" accesskey="5" title="">Manage</a></li>
+{% endblock %}

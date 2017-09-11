@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Skeleton 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130902
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+{% block head %}{% endblock %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<!--link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" /-->
+<link href="/static/default.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/static/fonts.css" rel="stylesheet" type="text/css" media="all" />
+
+<!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+
+<style>
+.dropdown1 {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content1 {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+}
+
+.dropdown1:hover .dropdown-content1 {
+    display: block;
+}
+</style>
+</head>
+<body>
+<div id="page" class="container">
+	<div id="header">
+		<div id="logo">
+			<img src="/static/images/lense.jpg" alt="" />
+			<h1><a href="#">Lense</a></h1>
+		</div>
+		<div id="menu">
+		  <ul>
+                        {% block menu %}{% endblock %}
+
+                  <li><a><br></a></li>
+                  <li>
+		      <form action="{{url_for('index')}}" method="post"><a><button type="submit" name="logout" value="logout" style="background-color: #2a2a2a;border:0" data-toggle="tooltip" title="Logout"><img src="/static/images/logout.png" width="50px" height="35px"/></button></a></form>
+                  </li>
+		  <li></li>
+		  </ul>
+
+		</div>
+	</div>
+	<div id="main">
+		<div id="welcome">
+		     <div class="title">
+			<span class="byline"> 
+                              {% block title %}{% endblock %}
+                        </span>
+		     </div>
+		</div>
+		<div id="featured">
+		     <div id="content">
+                        <div class="titl">
+                             {% block body %}{% endblock %}
+		        </div>
+                        {% block feature %}{% endblock %}
+                     </div>
+                     <div id="nav">
+                         <ul>
+                             {% block nav1 %}{% endblock %}
+                         </ul>
+                     </div>
+
+		</div>
+		<div id="copyright">
+			<span>&copy; UNO. All rights reserved</span>
+			<!--span>Design by VOS</span-->
+		</div>
+	</div>
+</div>
+{% block xtra_feature %}{% endblock %}
+</body>
+</html

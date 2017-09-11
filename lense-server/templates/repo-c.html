@@ -1,0 +1,113 @@
+{% extends "base2.html" %}
+
+############################################
+#set page title
+############################################
+{% block title %}
+   Repository
+{% endblock %}
+
+############################################
+#set refresh in header 
+############################################
+{% block head %}
+   <script type="text/javascript">
+        function hider1(var1,var2){
+	  document.getElementById(var1).style.display="none";
+	  document.getElementById(var2).style.display="";
+	}
+   </script>
+{% endblock %}
+############################################
+#set page contents
+############################################
+{% block body %}
+  {% with messages = get_flashed_messages() %}
+    <form action="{{url_for('repo')}}" method="post">
+        <table style="table-layout: fixed;width:100%" border=0>
+         <!--tr><th width="25%">
+          <div align="left"><div class="radio" >
+    	    <label><input type="radio" checked="checked" name="radio" value="sys">Local</label>
+  	  </div>
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][0]=='private' %}checked="checked"{% endif %} name="radio" value="private">UNO Repo</label>
+	  </div>
+	  <div class="radio">
+	    <label><input type="radio" {% if messages[0][0]=='public' %}checked="checked"{% endif %} name="radio" value="public">Public Repo</label>
+	  </div></div>
+	 </th><th>
+           <input style="align:left;" type="text" name="search" value="{{ messages[0][1] }}" />
+           <a>&nbsp;&nbsp;</a>
+           <input type="submit" value="Search" />
+         </th></tr-->
+       </table>
+  {% endwith %}
+{% endblock %}
+
+       <div id="featured">
+       </div>
+
+{% block feature %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div align="left">
+                 <p><br></p>
+
+                 <table style="table-layout: fixed;width:100%" border=0>
+                  <tr>
+                    <th width="20%">Controls</th>
+                    <th>Exercise</th>
+                    <th>Desc</th>
+                  </tr>
+		  <tr>
+		    <td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                  </tr>
+                  {% for lesn in messages[0]['index'] %}
+                     <tr>
+                        <td style="vertical-align:top;">
+			 <button type="submit" id="lesn" name="lesn" value="{{lesn,messages[0]}}" 
+			   {% if lesn in messages[0]['dld_lsn'] %}
+			      title="downloading" disabled><img src="/static/images/wait.png"/>
+			   {% else %}
+			      title="download"><img src="/static/images/dnld.png"/>
+			   {% endif %}
+			 </button>
+			</td>
+                        <td style="vertical-align:top;">
+			    {{ messages[0]['lesns'][lesn][1] }}
+			</td>
+                        <td align="">
+			    <div id="{{lesn}}-min" style="display:''">
+				{{ messages[0]['lesns'][lesn][2][:100] }}.. 
+				<div style="display:inline-block" onclick="hider1('{{lesn}}-min','{{lesn}}-max');">
+			             <font color="blue">more</font>
+				</div>
+			    </div>
+			    <div id="{{lesn}}-max" style="display:none">
+				{{ messages[0]['lesns'][lesn][2] }}
+				<div style="display:inline-block" onclick="hider1('{{lesn}}-max','{{lesn}}-min');">
+			             <font color="blue">less</font>
+				</div>
+			    </div>
+			    <br>
+			    <div>Last Updated: {{ messages[0]['lesns'][lesn][0] }}</div>
+			</td>
+                     </tr>
+		     <tr>
+			<td colspan="3" style="border-bottom: 1px solid #d1dbce !important;"></td>
+                     </tr>
+                  {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    {% endwith %}
+   </form>
+{% endblock %}
+
+############################################
+#set page navigation bar selection and links
+############################################
+{% block menu%}
+    <li><a href="{{url_for('home')}}" accesskey="1" title="">Home</a></li>
+    <li class="current_page_item"><a href="{{url_for('repo')}}" accesskey="2" title="">Repository</a></li>
+{% endblock %}
